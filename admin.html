@@ -154,7 +154,7 @@ function toast(msg,bad){const t=$('toast');t.innerHTML=`<div class="toast${bad?'
 
 /* ================= state ================= */
 const A={
-  token:store.get('token',''), repo:store.get('repo',DEFAULT_REPO),
+  token:store.get('token',''), repo:store.get('repo','')||DEFAULT_REPO,
   data:null, original:null, dirty:false, sel:null, newFiles:new Map(), // path -> {blob, url}
   busy:false
 };
@@ -170,7 +170,7 @@ const b64ToUtf8=b=>new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\n/g
 const blobToB64=blob=>new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result).split(',')[1]);fr.onerror=rej;fr.readAsDataURL(blob)});
 
 async function login(token,repo,persist){
-  A.token=token.trim();A.repo=repo.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\/$/,'');
+  A.token=token.trim();A.repo=(repo.trim()||DEFAULT_REPO).replace(/^https?:\/\/github\.com\//,'').replace(/\/$/,'');
   const info=await gh(`/repos/${A.repo}`);
   if(!info.permissions?.push)throw new Error('Энэ token-оор repo-д бичих эрх алга. Token үүсгэхдээ Contents: Read and write сонгоно уу.');
   const f=await gh(`/repos/${A.repo}/contents/${DATA_PATH}?ref=${BRANCH}&t=${Date.now()}`);
@@ -257,8 +257,8 @@ function loginView(){
       <h2 style="font-size:18px">Нэвтрэх</h2>
       <p class="muted" style="margin:0">Таавар нэмэхэд GitHub-ийн token хэрэгтэй. Token нь зөвхөн энэ төхөөрөмж дээр хадгалагдана.</p>
       <form class="stack" onsubmit="event.preventDefault();doLogin()">
-        <label class="f">GitHub token<input class="i" id="tok" type="password" autocomplete="off" value="${esc(A.token)}" placeholder="github_pat_…" required></label>
-        <label class="f">Repo<input class="i" id="repo" value="${esc(A.repo)}" required></label>
+        <label class="f">GitHub token<input class="i" id="tok" type="password" autocomplete="new-password" value="${esc(A.token)}" placeholder="github_pat_…" required></label>
+        <label class="f">Repo<input class="i" id="repo" value="${esc(A.repo)}" placeholder="${DEFAULT_REPO}" autocomplete="off" spellcheck="false"></label>
         <label class="row faint" style="gap:8px"><input type="checkbox" id="remember" checked> Энэ төхөөрөмж дээр сануулах</label>
         <div class="err" id="lerr"></div>
         <button class="btn" id="lbtn" type="submit">Нэвтрэх</button>
