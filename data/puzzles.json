@@ -1,0 +1,726 @@
+{
+ "version": 1,
+ "packs": [
+  {
+   "id": "phrases",
+   "name": "Холбоо үг",
+   "level": "easy",
+   "kind": "pair",
+   "desc": "Хоёр зургийг нийлүүлж хоршоо үг ол",
+   "prompt": "Хоёр зургийг нийлүүлээд нэг үг болго",
+   "placeholder": "Монгол эсвэл англиар",
+   "colors": [
+    [
+     214,
+     232,
+     255
+    ],
+    [
+     150,
+     190,
+     250
+    ]
+   ],
+   "cover": "images/0a9b1a9202.webp",
+   "items": [
+    {
+     "id": "acb1a9cb",
+     "a": "Нарны шил",
+     "en": "Sunglasses",
+     "clues": [
+      "images/805be5fdeb.webp",
+      "images/cc9f9b27b0.webp"
+     ],
+     "ans": "images/f02ef92e0f.webp",
+     "showWords": true
+    },
+    {
+     "id": "e8eedc00",
+     "a": "Цасан хүн",
+     "en": "Snowman",
+     "clues": [
+      "images/ed0888224c.webp",
+      "images/64210b8eb9.webp"
+     ],
+     "ans": "images/af37276f6e.webp",
+     "showWords": true
+    },
+    {
+     "id": "58b20133",
+     "a": "Галт уул",
+     "en": "Volcano",
+     "clues": [
+      "images/5f2ba509f2.webp",
+      "images/68c6ce42c7.webp"
+     ],
+     "ans": "images/7a09cb1f55.webp",
+     "showWords": true,
+     "alt": [
+      "volcano"
+     ]
+    },
+    {
+     "id": "3b8113a7",
+     "a": "Гар утас",
+     "en": "Mobile phone",
+     "clues": [
+      "images/29533905d4.webp",
+      "images/8117b6f885.webp"
+     ],
+     "ans": "images/8363854d7a.webp",
+     "showWords": true,
+     "alt": [
+      "phone",
+      "cellphone",
+      "smartphone"
+     ]
+    },
+    {
+     "id": "519162ab",
+     "a": "Далайн од",
+     "en": "Starfish",
+     "clues": [
+      "images/5476df8abb.webp",
+      "images/4f03b7b1ee.webp"
+     ],
+     "ans": "images/bbaec64c70.webp",
+     "showWords": true,
+     "alt": [
+      "sea star"
+     ]
+    },
+    {
+     "id": "9e0ab6ee",
+     "a": "Номын сан",
+     "en": "Library",
+     "clues": [
+      "images/ad6a1e656c.webp",
+      "images/1d4204e90a.webp"
+     ],
+     "ans": "images/1a9a39b8e1.webp",
+     "showWords": true
+    },
+    {
+     "id": "c167b3f5",
+     "a": "Борооны цув",
+     "en": "Raincoat",
+     "clues": [
+      "images/13163a84f1.webp",
+      "images/01ef4d600c.webp"
+     ],
+     "ans": "images/50f3fbf3b8.webp",
+     "showWords": true
+    },
+    {
+     "id": "677e8683",
+     "a": "Морин тэрэг",
+     "en": "Horse-drawn carriage",
+     "clues": [
+      "images/fb18645ddc.webp",
+      "images/bf174ba682.webp"
+     ],
+     "ans": "images/237f10a88b.webp",
+     "showWords": true,
+     "alt": [
+      "carriage",
+      "horse carriage"
+     ]
+    },
+    {
+     "id": "f7c894d5",
+     "a": "Цэцгийн сав",
+     "en": "Flowerpot",
+     "clues": [
+      "images/12fcd8f090.webp",
+      "images/700c0ce68e.webp"
+     ],
+     "ans": "images/7f41847253.webp",
+     "showWords": true,
+     "alt": [
+      "flower pot"
+     ]
+    },
+    {
+     "id": "d6821818",
+     "a": "Шүдний сойз",
+     "en": "Toothbrush",
+     "clues": [
+      "images/e88b190861.webp",
+      "images/2976695ec6.webp"
+     ],
+     "ans": "images/5122e9513a.webp",
+     "showWords": true
+    }
+   ]
+  },
+  {
+   "id": "words",
+   "name": "Үг бүтээх",
+   "level": "medium",
+   "kind": "pair",
+   "desc": "Үеүүдийг нийлүүлж шинэ үг бүтээ",
+   "prompt": "Хоёр зургийн нэрийг нийлүүлж шинэ үг бүтээ",
+   "placeholder": "Монгол эсвэл англиар",
+   "colors": [
+    [
+     210,
+     243,
+     226
+    ],
+    [
+     130,
+     205,
+     170
+    ]
+   ],
+   "cover": "images/d4c96f2e89.webp",
+   "items": [
+    {
+     "id": "69937725",
+     "a": "Сүүдэр",
+     "en": "Shadow",
+     "clues": [
+      "images/9842e01ab2.webp",
+      "images/af5afea3c4.webp"
+     ],
+     "ans": "images/c485a32f53.webp"
+    },
+    {
+     "id": "ce68f12d",
+     "a": "Гарчиг",
+     "en": "Title",
+     "clues": [
+      "images/29533905d4.webp",
+      "images/9a10b04a99.webp"
+     ],
+     "ans": "images/6f139f171e.webp"
+    },
+    {
+     "id": "c23fca99",
+     "a": "Саван",
+     "en": "Soap",
+     "clues": [
+      "images/d2e2897087.webp",
+      "images/b4b0fa2b7e.webp"
+     ],
+     "ans": "images/5f99a1cca7.webp"
+    },
+    {
+     "id": "bc1ec2ae",
+     "a": "Лууван",
+     "en": "Carrot",
+     "clues": [
+      "images/2ae0ba36a5.webp",
+      "images/cc027a184a.webp"
+     ],
+     "ans": "images/e06b22e7b4.webp"
+    },
+    {
+     "id": "8eab4357",
+     "a": "Бууцай",
+     "en": "Spinach",
+     "clues": [
+      "images/cf1a375b28.webp",
+      "images/862919ef25.webp"
+     ],
+     "ans": "images/b8070785d8.webp"
+    },
+    {
+     "id": "58615023",
+     "a": "Зурам",
+     "en": "Ground squirrel",
+     "clues": [
+      "images/6145ef3c7c.webp",
+      "images/cb81bd9c8c.webp"
+     ],
+     "ans": "images/4bc2f06fb9.webp",
+     "hint": "Зураг зурах + ам",
+     "alt": [
+      "gopher",
+      "squirrel"
+     ]
+    },
+    {
+     "id": "313b1998",
+     "a": "Самбар",
+     "en": "Board",
+     "clues": [
+      "images/62477c7662.webp",
+      "images/86fb057ec8.webp"
+     ],
+     "ans": "images/5bd45ddb16.webp",
+     "hint": "Сам + бар"
+    },
+    {
+     "id": "e4cf0a8f",
+     "a": "Хайрцаг",
+     "en": "Box",
+     "clues": [
+      "images/7619e47a7e.webp",
+      "images/ab6bcd6e9e.webp"
+     ],
+     "ans": "images/acf7c96f5c.webp",
+     "hint": "Хайр + цаг"
+    },
+    {
+     "id": "6aa1433f",
+     "a": "Наранцэцэг",
+     "en": "Sunflower",
+     "clues": [
+      "images/f00ede98b8.webp",
+      "images/b7319b4548.webp"
+     ],
+     "ans": "images/f3724b1e2c.webp",
+     "hint": "Нар + цэцэг"
+    },
+    {
+     "id": "18b323f1",
+     "a": "Галуу",
+     "en": "Goose",
+     "clues": [
+      "images/c1f6ca0439.webp",
+      "images/8add9a3168.webp"
+     ],
+     "ans": "images/ecce01a381.webp",
+     "hint": "Гал + уу"
+    }
+   ]
+  },
+  {
+   "id": "countries",
+   "name": "Улсын нэр",
+   "level": "advanced",
+   "kind": "pair",
+   "desc": "Хоёр сэжүүрээр улсыг тааж ол",
+   "prompt": "Аль улсыг хэлж байна вэ?",
+   "placeholder": "Улсын нэр",
+   "colors": [
+    [
+     255,
+     229,
+     204
+    ],
+    [
+     245,
+     170,
+     120
+    ]
+   ],
+   "cover": "images/1d641e6d51.webp",
+   "items": [
+    {
+     "id": "3185d75d",
+     "a": "Япон",
+     "en": "Japan",
+     "clues": [
+      "images/4bdf05f6e6.webp",
+      "images/271654b4bc.webp"
+     ],
+     "ans": "images/60ac414b22.webp",
+     "hint": "Ази тивийн арлын улс"
+    },
+    {
+     "id": "97edeca2",
+     "a": "Канад",
+     "en": "Canada",
+     "clues": [
+      "images/1cc9210532.webp",
+      "images/f10e21ceb6.webp"
+     ],
+     "ans": "images/b7ec13ddd2.webp",
+     "hint": "Хойд Америкийн улс"
+    },
+    {
+     "id": "0e9d5bd4",
+     "a": "Египет",
+     "en": "Egypt",
+     "clues": [
+      "images/cfcf352392.webp",
+      "images/bca1c5f825.webp"
+     ],
+     "ans": "images/d59bcbfe9d.webp",
+     "hint": "Африк тивийн улс"
+    },
+    {
+     "id": "a478a245",
+     "a": "Франц",
+     "en": "France",
+     "clues": [
+      "images/e248c0a8ed.webp",
+      "images/3373b3b8ce.webp"
+     ],
+     "ans": "images/1171a652ef.webp",
+     "hint": "Европын улс"
+    },
+    {
+     "id": "9fa8be17",
+     "a": "Австрали",
+     "en": "Australia",
+     "clues": [
+      "images/00896c0d03.webp",
+      "images/25b4ef5ea5.webp"
+     ],
+     "ans": "images/8cd5a9cef3.webp",
+     "hint": "Өмнөд хагас бөмбөрцгийн улс"
+    },
+    {
+     "id": "14188971",
+     "a": "Хятад",
+     "en": "China",
+     "clues": [
+      "images/d344137fb4.webp",
+      "images/cbd4c4b597.webp"
+     ],
+     "ans": "images/922515959a.webp",
+     "hint": "Монгол Улстай хиллэдэг улс"
+    },
+    {
+     "id": "37ea366c",
+     "a": "Өмнөд Солонгос",
+     "en": "South Korea",
+     "clues": [
+      "images/602e83fe81.webp",
+      "images/ef3ee76319.webp"
+     ],
+     "ans": "images/f1327ba8e8.webp",
+     "hint": "Зүүн Азийн улс · К-поп, таеквондо",
+     "alt": [
+      "Солонгос",
+      "Korea",
+      "Өмнөд Солонгос улс"
+     ]
+    },
+    {
+     "id": "30f9bd16",
+     "a": "Герман",
+     "en": "Germany",
+     "clues": [
+      "images/f0d7495b90.webp",
+      "images/09efc79eba.webp"
+     ],
+     "ans": "images/64a239b928.webp",
+     "hint": "Европын улс · нийслэл нь Берлин"
+    },
+    {
+     "id": "d45d7626",
+     "a": "Бразил",
+     "en": "Brazil",
+     "clues": [
+      "images/bd2ebdba68.webp",
+      "images/8e52e699f8.webp"
+     ],
+     "ans": "images/0798c13456.webp",
+     "hint": "Өмнөд Америкийн улс",
+     "alt": [
+      "Brasil"
+     ]
+    },
+    {
+     "id": "46c0ce55",
+     "a": "Их Британи",
+     "en": "United Kingdom",
+     "clues": [
+      "images/2155f8f31a.webp",
+      "images/e3dbb323d9.webp"
+     ],
+     "ans": "images/d91fc68f1e.webp",
+     "hint": "Европын арлын улс · нийслэл нь Лондон",
+     "alt": [
+      "Англи",
+      "England",
+      "UK",
+      "Britain",
+      "Great Britain"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "songs",
+   "name": "Дууны нэр",
+   "level": "advanced",
+   "kind": "song",
+   "desc": "Эгшиггүй бичсэн монгол дууны нэр",
+   "prompt": "Эгшгийг нөхөөд дууны нэрийг ол",
+   "placeholder": "Дууны нэр",
+   "colors": [
+    [
+     228,
+     222,
+     255
+    ],
+    [
+     160,
+     145,
+     240
+    ]
+   ],
+   "cover": "images/9f10ef8fd7.webp",
+   "items": [
+    {
+     "id": "75180c6a",
+     "a": "Бодлын гүнээс",
+     "code": "БДЛНГНС",
+     "artist": "Хамтлаг: Morning star"
+    },
+    {
+     "id": "a47de033",
+     "a": "Итгэл юм шүү",
+     "code": "ТГЛЮШ",
+     "artist": "Дуучин: Л.Болдбаатар"
+    },
+    {
+     "id": "66e027e2",
+     "a": "Улаанбаатарын үдэш",
+     "code": "ЛБРНДШ",
+     "artist": "Хамтлаг: Инээмсэглэл"
+    },
+    {
+     "id": "d47c567c",
+     "a": "Үүлэн домог",
+     "code": "ЛНДМГ",
+     "artist": "Дуучин: Д. Болд/Камертон"
+    },
+    {
+     "id": "cd42c7ff",
+     "a": "Маргаашын нарлуу хамт аялах уу",
+     "code": "МРГШННРЛХМТЯЛХ",
+     "artist": "Дуучин: Ука"
+    },
+    {
+     "id": "3151a06c",
+     "a": "Братан",
+     "code": "БРТН",
+     "artist": "Дуучин: Гангаа and Л.Лхагвасүрэн"
+    },
+    {
+     "id": "f909df61",
+     "a": "Арван найман нас",
+     "code": "РВННМННС",
+     "artist": "Хамтлаг: Камертон"
+    },
+    {
+     "id": "395dd01c",
+     "a": "Бүгд тэгээс эхэлдэг",
+     "code": "БГДТГСХЛДГ",
+     "artist": "Дуучин: ThunderZ"
+    },
+    {
+     "id": "66b6ac09",
+     "a": "Сувгаа соль",
+     "code": "СВГСЛ",
+     "artist": "Дуучин: Ginjin and Mrs M"
+    },
+    {
+     "id": "489cb6a8",
+     "a": "Ээжийн чанасан цай",
+     "code": "ЖНЧНСНЦ",
+     "artist": "Дуучин: С. Жавхлан"
+    }
+   ]
+  },
+  {
+   "id": "rebus1",
+   "name": "English Rebus 1",
+   "level": "advanced",
+   "kind": "rebus",
+   "desc": "Үсэг, үгийн байрлалаас англи үг ол",
+   "prompt": "Байрлал, давталт, хэлбэрийг ажигла",
+   "placeholder": "Англи эсвэл монголоор",
+   "colors": [
+    [
+     255,
+     222,
+     232
+    ],
+    [
+     240,
+     140,
+     170
+    ]
+   ],
+   "cover": "images/5979cec2eb.webp",
+   "items": [
+    {
+     "id": "50e54a05",
+     "a": "Breakfast",
+     "mn": "Өглөөний цай",
+     "q": "images/84a1429e57.webp",
+     "ans": "images/6c91e0367c.webp"
+    },
+    {
+     "id": "1b5af730",
+     "a": "3D Movie",
+     "mn": "3D кино",
+     "q": "images/11df67505d.webp",
+     "ans": "images/890fab4531.webp",
+     "alt": [
+      "3d movies"
+     ]
+    },
+    {
+     "id": "b4769c49",
+     "a": "Downtown",
+     "mn": "Хотын төв",
+     "q": "images/0e9554c1de.webp",
+     "ans": "images/97c9b17c91.webp"
+    },
+    {
+     "id": "57c31bd5",
+     "a": "Top secret",
+     "mn": "Маш нууц",
+     "q": "images/0431621d19.webp",
+     "ans": "images/f53c445b47.webp",
+     "alt": [
+      "topsecret"
+     ]
+    },
+    {
+     "id": "85288888",
+     "a": "Try to understand",
+     "mn": "Ойлгохыг хичээ",
+     "q": "images/c707ac6ecd.webp",
+     "ans": "images/2e4ae8fb11.webp"
+    },
+    {
+     "id": "85d79872",
+     "a": "Potatoes",
+     "mn": "Төмс",
+     "q": "images/28f041870b.webp",
+     "ans": "images/4d88c75107.webp"
+    },
+    {
+     "id": "f5b9fe75",
+     "a": "Waterfall",
+     "mn": "Хүрхрээ",
+     "q": "images/f4bf672a1b.webp",
+     "ans": "images/f034261e17.webp"
+    },
+    {
+     "id": "14f6b408",
+     "a": "Download",
+     "mn": "Татаж авах",
+     "q": "images/ecf4fdef21.webp",
+     "ans": "images/b34e0e7361.webp"
+    },
+    {
+     "id": "82cacde1",
+     "a": "Tuna fish",
+     "mn": "Туна загас",
+     "q": "images/53dee4896a.webp",
+     "ans": "images/4e2ceda6a6.webp",
+     "alt": [
+      "tuna"
+     ]
+    },
+    {
+     "id": "7b223479",
+     "a": "Good looking",
+     "mn": "Царайлаг",
+     "q": "images/89c466ab50.webp",
+     "ans": "images/a1adf5045e.webp"
+    }
+   ]
+  },
+  {
+   "id": "rebus2",
+   "name": "English Rebus 2",
+   "level": "advanced",
+   "kind": "rebus",
+   "desc": "Шинэ 10 англи таавар",
+   "prompt": "Байрлал, давталт, хэлбэрийг ажигла",
+   "placeholder": "Англи эсвэл монголоор",
+   "colors": [
+    [
+     255,
+     240,
+     190
+    ],
+    [
+     240,
+     195,
+     80
+    ]
+   ],
+   "cover": "images/5ad5009113.webp",
+   "items": [
+    {
+     "id": "52890bde",
+     "a": "Unbroken",
+     "mn": "Эвдрээгүй",
+     "q": "images/056eb587a9.webp",
+     "ans": "images/29d70d6d2e.webp"
+    },
+    {
+     "id": "0b0fd622",
+     "a": "Summer",
+     "mn": "Зун",
+     "q": "images/5e1badbd6c.webp",
+     "ans": "images/799432062f.webp"
+    },
+    {
+     "id": "c69c6221",
+     "a": "Tripod",
+     "mn": "Гурван хөлт тулгуур",
+     "q": "images/268f8d792d.webp",
+     "ans": "images/0706480313.webp"
+    },
+    {
+     "id": "bb628db5",
+     "a": "Fortunate",
+     "mn": "Азтай",
+     "q": "images/a0c30d9f2d.webp",
+     "ans": "images/c26b291697.webp"
+    },
+    {
+     "id": "11c3c76f",
+     "a": "Forehead",
+     "mn": "Дух",
+     "q": "images/9cfad16117.webp",
+     "ans": "images/da7faf5995.webp"
+    },
+    {
+     "id": "9d41fce2",
+     "a": "Excuse me",
+     "mn": "Уучлаарай",
+     "q": "images/1ce0986ce4.webp",
+     "ans": "images/306b0f3667.webp",
+     "alt": [
+      "excuseme"
+     ]
+    },
+    {
+     "id": "09261b39",
+     "a": "Wake up",
+     "mn": "Сэрэх",
+     "q": "images/182d032332.webp",
+     "ans": "images/9af3d6f3fc.webp"
+    },
+    {
+     "id": "5672bff7",
+     "a": "Advice",
+     "mn": "Зөвлөгөө",
+     "q": "images/a729bf2e9c.webp",
+     "ans": "images/4022300868.webp"
+    },
+    {
+     "id": "696c29ce",
+     "a": "Forty years",
+     "mn": "40 жил",
+     "q": "images/95cd361be7.webp",
+     "ans": "images/01ed50fc67.webp",
+     "alt": [
+      "40 years"
+     ]
+    },
+    {
+     "id": "c78e9580",
+     "a": "Lemonade",
+     "mn": "Нимбэгний ундаа",
+     "q": "images/7151711126.webp",
+     "ans": "images/3b457e879d.webp"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Mongol Rebus Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;800&family=Onest:wght@400;500;600;700&display=swap">
+<style>
+/* Admin: same tokens as the game, denser layout. Pack chips on top, puzzle grid below, editor as a sheet. */
+:root{
+  --bg:#F4F6FA; --surface:#FFFFFF; --sunk:#EAEEF5; --line:#DCE2EC;
+  --ink:#13203B; --muted:#5E6880; --faint:#8A93A8;
+  --accent:#1D4ED8; --accent-ink:#FFFFFF; --accent-soft:#E3EAFD;
+  --gold:#D9950B; --gold-soft:#FFF3D6;
+  --good:#11845B; --good-soft:#E2F5EC; --bad:#C2364B; --bad-soft:#FCE8EB;
+  --display:"Unbounded","Onest",system-ui,sans-serif;
+  --body:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0D1220; --surface:#151C2E; --sunk:#1C2539; --line:#28324A;
+  --ink:#E8ECF5; --muted:#A1AAC0; --faint:#737D96;
+  --accent:#7DA2FF; --accent-ink:#0B1226; --accent-soft:#1E2B4D;
+  --gold:#F2B544; --gold-soft:#3A2E14;
+  --good:#4FD39A; --good-soft:#123527; --bad:#FF7D90; --bad-soft:#3D1A22; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+a{color:var(--accent)}
+.wrap{max-width:980px;margin:0 auto;padding-block:18px 120px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{margin:0;text-wrap:balance}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.mark{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:-.02em}
+.mark b{color:var(--accent)} .mark small{font-family:var(--body);font-weight:600;font-size:12px;color:var(--faint);letter-spacing:.08em;text-transform:uppercase;margin-left:8px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:700;background:var(--accent);color:var(--accent-ink);display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none}
+.btn.ghost{background:var(--sunk);color:var(--ink)}
+.btn.danger{background:var(--bad-soft);color:var(--bad)}
+.btn.small{padding:7px 11px;font-size:13px;border-radius:10px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.card{background:var(--surface);border-radius:18px;padding:18px;box-shadow:0 1px 2px rgb(15 25 55 / .06),0 6px 18px rgb(15 25 55 / .05)}
+.muted{color:var(--muted)} .faint{color:var(--faint);font-size:13px}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600;color:var(--muted)}
+label.f .req{color:var(--bad)}
+input.i,select.i,textarea.i{width:100%;border:1.5px solid var(--line);background:var(--surface);border-radius:11px;padding:10px 12px;font-size:15px;color:var(--ink);font-weight:500}
+input.i:focus,select.i:focus,textarea.i:focus{outline:none;border-color:var(--accent)}
+.help{font-size:12px;color:var(--faint);font-weight:500}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:560px){.grid2{grid-template-columns:1fr}}
+.stack{display:flex;flex-direction:column;gap:12px}
+
+/* login */
+.login{max-width:460px;margin:8vh auto 0}
+.steps{margin:0;padding-left:20px;color:var(--muted);font-size:14px;display:flex;flex-direction:column;gap:4px}
+.err{color:var(--bad);font-weight:600;font-size:14px;min-height:20px}
+
+/* packs */
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;scrollbar-width:thin}
+.chip{flex:0 0 auto;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:6px 12px 6px 6px;display:flex;align-items:center;gap:9px;font-weight:600;font-size:14px}
+.chip img{width:40px;height:30px;border-radius:7px;object-fit:cover;background:var(--sunk)}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.chip.add{padding:6px 14px;color:var(--accent);border-style:dashed}
+.chip small{color:var(--faint);font-weight:600}
+.packhead{display:grid;grid-template-columns:200px minmax(0,1fr);gap:18px;align-items:start}
+.packhead .cov{width:100%;aspect-ratio:4/3;border-radius:14px;object-fit:cover;background:var(--sunk);display:block}
+@media (max-width:640px){.packhead{grid-template-columns:1fr}.packhead .cov{max-width:320px}}
+.lvl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.kindtag{display:inline-block;font-size:12px;font-weight:700;background:var(--sunk);color:var(--muted);border-radius:99px;padding:3px 9px}
+details.settings{margin-top:12px}
+details.settings summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--accent);list-style:none}
+details.settings summary::-webkit-details-marker{display:none}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.sw{width:34px;height:34px;border-radius:10px;border:2px solid transparent;padding:0}
+.sw[aria-pressed="true"]{border-color:var(--ink)}
+
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:16px}
+.item{background:var(--surface);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 2px rgb(15 25 55 / .06);border:0;padding:0;text-align:left}
+.item .th{display:grid;grid-template-columns:1fr 1fr;aspect-ratio:2/1;background:var(--sunk)}
+.item .th.one{grid-template-columns:1fr}
+.item .th img{width:100%;height:100%;object-fit:cover;display:block}
+.item .th .code{display:grid;place-items:center;background:#fff;color:#13203B;font-family:var(--display);font-weight:800;font-size:15px;letter-spacing:.06em;padding:6px;text-align:center;overflow-wrap:anywhere}
+.item .meta{padding:9px 11px 11px;display:flex;flex-direction:column;gap:1px;min-width:0}
+.item strong{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item small{color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .badge{align-self:flex-start;margin-top:4px;font-size:11px;font-weight:700;color:var(--gold);background:var(--gold-soft);border-radius:99px;padding:2px 8px}
+.item.newone{outline:2px dashed var(--accent);outline-offset:-2px;display:grid;place-items:center;min-height:150px;color:var(--accent);font-weight:700}
+.empty{padding:30px;text-align:center;color:var(--muted)}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgb(8 12 24 / .55);display:flex;justify-content:center;align-items:flex-end;z-index:20;padding-top:env(safe-area-inset-top,0px)}
+@media (min-width:700px){.scrim{align-items:center;padding:24px}}
+.sheet{background:var(--bg);width:min(720px,100%);max-height:100%;overflow:auto;border-radius:20px 20px 0 0;padding:20px max(18px,env(safe-area-inset-left,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-right,0px))}
+@media (min-width:700px){.sheet{border-radius:20px;max-height:92vh}}
+.sheet-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.sheet-h h2{font-family:var(--display);font-size:18px}
+.x{border:0;background:var(--sunk);width:36px;height:36px;border-radius:10px;font-size:18px;line-height:1}
+.drops{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.drops.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:520px){.drops{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.drop{position:relative;display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
+.drop .box{position:relative;aspect-ratio:1/1;border-radius:14px;border:2px dashed var(--line);background:var(--surface);display:grid;place-items:center;overflow:hidden;text-align:center;padding:8px;color:var(--faint);font-size:12px;font-weight:600;cursor:pointer}
+.drop.wide .box{aspect-ratio:16/10}
+.drop .box.has{border:0;padding:0}
+.drop .box img{width:100%;height:100%;object-fit:cover;display:block}
+.drop.wide .box img,.drop.fit .box img{object-fit:contain;background:#fff}
+.drop .box.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.drop .clear{position:absolute;top:30px;right:6px;z-index:2;border:0;border-radius:8px;background:rgb(0 0 0 / .6);color:#fff;font-size:12px;padding:3px 8px}
+.sheet-f{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap;margin-top:18px}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bad-soft);color:var(--bad);border-radius:12px;padding:10px 12px;font-weight:600;font-size:14px}
+
+/* publish bar */
+.pub{position:fixed;left:0;right:0;bottom:0;z-index:10;padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:var(--surface);box-shadow:0 -6px 24px rgb(10 20 50 / .12);display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+.pub span{font-weight:600}
+.pub .dot{width:9px;height:9px;border-radius:50%;background:var(--gold);display:inline-block;margin-right:6px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:30;background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:12px;font-weight:600;font-size:14px;max-width:calc(100% - 32px);text-align:center}
+.toast.bad{background:var(--bad);color:#fff}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div id="sheet"></div>
+<div id="pub"></div>
+<div id="toast"></div>
+
+<script>
+/* ================= config ================= */
+const DEFAULT_REPO='b25fm1112-maker/mongol-rebus';
+const BRANCH='main';
+const DATA_PATH='data/puzzles.json';
+const LEVELS=[{id:'easy',name:'Хялбар',age:'6+'},{id:'medium',name:'Дунд',age:'8+'},{id:'advanced',name:'Ахисан',age:'12+'}];
+const KINDS={
+  pair:{name:'Хоёр зураг + хариулт',desc:'Хоёр сэжүүр зураг нийлж нэг хариулт болно',prompt:'Хоёр зургийг нийлүүлээд нэг үг болго',placeholder:'Монгол эсвэл англиар'},
+  rebus:{name:'Ребус зураг',desc:'Үсэг, үгийн байрлалаар хийсэн таавар',prompt:'Байрлал, давталт, хэлбэрийг ажигла',placeholder:'Англи эсвэл монголоор'},
+  song:{name:'Эгшиггүй үг',desc:'Эгшгийг нь хассан нэр (дуу, кино г.м.)',prompt:'Эгшгийг нөхөөд нэрийг ол',placeholder:'Нэрийг бичнэ үү'}
+};
+const PALETTE=[[[214,232,255],[150,190,250]],[[210,243,226],[130,205,170]],[[255,229,204],[245,170,120]],[[228,222,255],[160,145,240]],[[255,222,232],[240,140,170]],[[255,240,190],[240,195,80]],[[214,244,248],[110,200,215]],[[236,236,240],[170,175,190]]];
+
+/* ================= helpers ================= */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,10);
+const store={get(k,d){try{const v=localStorage.getItem('mra:'+k)??sessionStorage.getItem('mra:'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v,persist=true){try{(persist?localStorage:sessionStorage).setItem('mra:'+k,JSON.stringify(v))}catch(e){}},
+  del(k){try{localStorage.removeItem('mra:'+k);sessionStorage.removeItem('mra:'+k)}catch(e){}}};
+const VOWELS=/[аэиоуөүыяеёюАЭИОУӨҮЫЯЕЁЮ\s]/g;
+const consonants=s=>String(s).replace(VOWELS,'').replace(/[ьъЬЪ]/g,'').toLocaleUpperCase('mn-MN');
+const rgb=c=>`rgb(${c[0]},${c[1]},${c[2]})`;
+function toast(msg,bad){const t=$('toast');t.innerHTML=`<div class="toast${bad?' bad':''}" role="status">${esc(msg)}</div>`;clearTimeout(toast._t);toast._t=setTimeout(()=>t.innerHTML='',bad?6000:3500)}
+
+/* ================= state ================= */
+const A={
+  token:store.get('token',''), repo:store.get('repo',DEFAULT_REPO),
+  data:null, original:null, dirty:false, sel:null, newFiles:new Map(), // path -> {blob, url}
+  busy:false
+};
+const fileUrl=p=>A.newFiles.get(p)?.url||p;
+
+/* ================= GitHub API ================= */
+async function gh(path,opt={}){
+  const r=await fetch('https://api.github.com'+path,{...opt,headers:{'Accept':'application/vnd.github+json','Authorization':'Bearer '+A.token,'X-GitHub-Api-Version':'2022-11-28',...(opt.body?{'Content-Type':'application/json'}:{})}});
+  if(!r.ok){let m='';try{m=(await r.json()).message}catch(e){}const err=new Error(m||('HTTP '+r.status));err.status=r.status;throw err}
+  return r.status===204?null:r.json();
+}
+const b64ToUtf8=b=>new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\n/g,'')),c=>c.charCodeAt(0)));
+const blobToB64=blob=>new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result).split(',')[1]);fr.onerror=rej;fr.readAsDataURL(blob)});
+
+async function login(token,repo,persist){
+  A.token=token.trim();A.repo=repo.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\/$/,'');
+  const info=await gh(`/repos/${A.repo}`);
+  if(!info.permissions?.push)throw new Error('Энэ token-оор repo-д бичих эрх алга. Token үүсгэхдээ Contents: Read and write сонгоно уу.');
+  const f=await gh(`/repos/${A.repo}/contents/${DATA_PATH}?ref=${BRANCH}&t=${Date.now()}`);
+  A.data=JSON.parse(b64ToUtf8(f.content));A.original=JSON.stringify(A.data);
+  store.set('token',A.token,persist);store.set('repo',A.repo);
+  A.sel=A.data.packs[0]?.id||null;A.dirty=false;A.newFiles.clear();
+}
+function logout(){if(A.dirty&&!logout.ok){logout.ok=true;toast('Нийтлээгүй өөрчлөлт байна. Дахин дарвал устгагдана.',true);return}
+  store.del('token');A.token='';A.data=null;A.dirty=false;logout.ok=false;render()}
+
+/* ================= image processing ================= */
+function loadImg(src){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>rej(new Error('Зургийг уншиж чадсангүй'));im.src=src})}
+async function canvasBlob(cv){
+  let b=await new Promise(r=>cv.toBlob(r,'image/webp',.82));
+  if(!b||b.type!=='image/webp')b=await new Promise(r=>cv.toBlob(r,'image/jpeg',.86));
+  return b;
+}
+/* mode: 'square' crop to 1:1 (clue tiles), 'fit' keep aspect (answers, rebus) */
+async function processImage(file,mode){
+  const url=URL.createObjectURL(file);
+  try{
+    const im=await loadImg(url);
+    let sx=0,sy=0,sw=im.naturalWidth,sh=im.naturalHeight,W,H;
+    if(mode==='square'){const s=Math.min(sw,sh);sx=(sw-s)/2;sy=(sh-s)/2;sw=sh=s;W=H=Math.min(640,s)}
+    else{const k=Math.min(1,1000/Math.max(sw,sh));W=Math.round(sw*k);H=Math.round(sh*k)}
+    const cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');
+    c.fillStyle='#fff';c.fillRect(0,0,W,H);c.imageSmoothingQuality='high';c.drawImage(im,sx,sy,sw,sh,0,0,W,H);
+    return addFile(await canvasBlob(cv));
+  }finally{URL.revokeObjectURL(url)}
+}
+function addFile(blob){
+  const ext=blob.type==='image/webp'?'webp':'jpg';
+  const path=`images/${Date.now().toString(36)}${uid()}.${ext}`;
+  A.newFiles.set(path,{blob,url:URL.createObjectURL(blob)});
+  return path;
+}
+
+/* ================= cover (same template as the existing covers) ================= */
+let fontReady=null;
+function ensureFont(){return fontReady??=(document.fonts?.load?Promise.all([document.fonts.load('800 80px Unbounded'),document.fonts.load('800 64px Unbounded')]).catch(()=>{}):Promise.resolve())}
+function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+function drawCover(c,src,x,y,w,h,fit){
+  const iw=src.naturalWidth,ih=src.naturalHeight;
+  if(fit){const k=Math.min(w/iw,h/ih),dw=iw*k,dh=ih*k;c.drawImage(src,x+(w-dw)/2,y+(h-dh)/2,dw,dh);return}
+  const k=Math.max(w/iw,h/ih),sw=w/k,sh=h/k;c.drawImage(src,(iw-sw)/2,(ih-sh)/2,sw,sh,x,y,w,h);
+}
+async function makeCover(pack){
+  await ensureFont();
+  const it=pack.items.find(x=>x.id===pack.coverItem)||pack.items[0];
+  const [c1,c2]=pack.colors||PALETTE[0];
+  const W=800,H=600,CX=70,CY=95,CW=660,CH=410,R=34,P=22;
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');
+  const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,rgb(c1));g.addColorStop(1,rgb(c2));c.fillStyle=g;c.fillRect(0,0,W,H);
+  c.fillStyle='rgba(255,255,255,.43)';c.font='800 64px Unbounded, sans-serif';c.textBaseline='top';
+  [[18,10],[712,8],[30,500],[720,505]].forEach(([x,y])=>c.fillText('?',x,y));
+  c.save();c.shadowColor='rgba(20,30,70,.28)';c.shadowBlur=36;c.shadowOffsetY=14;rr(c,CX,CY,CW,CH,R);c.fillStyle='#fff';c.fill();c.restore();
+  if(it){
+    if(pack.kind==='pair'&&it.clues?.length===2){
+      const G=56,tw=(CW-2*P-G)/2,th=CH-2*P;
+      for(let k=0;k<2;k++){const im=await loadImg(fileUrl(it.clues[k]));const x=k?CX+CW-P-tw:CX+P;
+        c.save();rr(c,x,CY+P,tw,th,22);c.clip();drawCover(c,im,x,CY+P,tw,th);c.restore()}
+      const mx=CX+CW/2,my=CY+CH/2;c.fillStyle='#13203B';c.beginPath();c.arc(mx,my,30,0,7);c.fill();
+      c.strokeStyle='#fff';c.lineWidth=7;c.beginPath();c.moveTo(mx-14,my);c.lineTo(mx+14,my);c.moveTo(mx,my-14);c.lineTo(mx,my+14);c.stroke();
+    }else if(pack.kind==='rebus'&&it.q){
+      const im=await loadImg(fileUrl(it.q));c.save();rr(c,CX+P,CY+P,CW-2*P,CH-2*P,14);c.clip();drawCover(c,im,CX+P,CY+P,CW-2*P,CH-2*P,true);c.restore();
+    }else if(pack.kind==='song'){
+      const s=it.code||consonants(it.a);let size=110;c.textBaseline='middle';c.textAlign='center';
+      do{c.font=`800 ${size}px Unbounded, sans-serif`;size-=4}while(c.measureText(s).width>CW-90&&size>36);
+      c.fillStyle='#13203B';c.fillText(s,CX+CW/2,CY+CH/2+4);
+    }
+  }
+  return addFile(await canvasBlob(cv));
+}
+
+/* ================= render ================= */
+function render(){
+  if(!A.data){$('app').innerHTML=loginView();$('pub').innerHTML='';return}
+  $('app').innerHTML=mainView();renderPub();
+}
+function loginView(){
+  return `<div class="login stack">
+    <div class="mark">MONGOL <b>REBUS</b><small>Admin</small></div>
+    <div class="card stack">
+      <h2 style="font-size:18px">Нэвтрэх</h2>
+      <p class="muted" style="margin:0">Таавар нэмэхэд GitHub-ийн token хэрэгтэй. Token нь зөвхөн энэ төхөөрөмж дээр хадгалагдана.</p>
+      <form class="stack" onsubmit="event.preventDefault();doLogin()">
+        <label class="f">GitHub token<input class="i" id="tok" type="password" autocomplete="off" value="${esc(A.token)}" placeholder="github_pat_…" required></label>
+        <label class="f">Repo<input class="i" id="repo" value="${esc(A.repo)}" required></label>
+        <label class="row faint" style="gap:8px"><input type="checkbox" id="remember" checked> Энэ төхөөрөмж дээр сануулах</label>
+        <div class="err" id="lerr"></div>
+        <button class="btn" id="lbtn" type="submit">Нэвтрэх</button>
+      </form>
+    </div>
+    <details class="card"><summary style="cursor:pointer;font-weight:700">Token яаж авах вэ?</summary>
+      <ol class="steps" style="margin-top:10px">
+        <li><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a> хаягаар орно.</li>
+        <li><b>Token name</b>: «Mongol Rebus admin», <b>Expiration</b>: 1 жил.</li>
+        <li><b>Repository access</b> → <b>Only select repositories</b> → <b>mongol-rebus</b>.</li>
+        <li><b>Permissions</b> → <b>Contents</b> → <b>Read and write</b>.</li>
+        <li><b>Generate token</b> дарж, гарсан кодыг хуулаад дээр буулгана.</li>
+      </ol>
+    </details>
+    <a class="faint" href="./" style="text-align:center">← Тоглоом руу буцах</a>
+  </div>`;
+}
+function packCover(p){return p.cover?fileUrl(p.cover):''}
+function mainView(){
+  const packs=A.data.packs,p=packs.find(x=>x.id===A.sel);
+  return `<div class="top">
+    <div class="mark">MONGOL <b>REBUS</b><small>Admin</small></div>
+    <div class="row"><a class="btn ghost small" href="./" target="_blank" rel="noopener">Сайтыг харах</a><button class="btn ghost small" onclick="logout()">Гарах</button></div>
+  </div>
+  <div class="chips" role="tablist" aria-label="Багцууд">
+    ${packs.map(x=>`<button class="chip" role="tab" aria-pressed="${x.id===A.sel}" onclick="A.sel='${x.id}';render()">${x.cover?`<img src="${esc(packCover(x))}" alt="">`:''}${esc(x.name)} <small>${x.items.length}</small></button>`).join('')}
+    <button class="chip add" onclick="openPack()">+ Шинэ багц</button>
+  </div>
+  ${p?packView(p):`<div class="card empty">Багц алга. «Шинэ багц» дарж эхлээрэй.</div>`}`;
+}
+function packView(p){
+  const l=LEVELS.find(x=>x.id===p.level)||LEVELS[0];
+  return `<div class="card">
+    <div class="packhead">
+      ${p.cover?`<img class="cov" src="${esc(packCover(p))}" alt="Ковер">`:`<div class="cov" style="display:grid;place-items:center;color:var(--faint);font-size:13px">Ковер нийтлэхэд автоматаар үүснэ</div>`}
+      <div class="stack" style="gap:6px">
+        <span class="lvl">${l.name} · ${l.age}</span>
+        <h1 style="font-family:var(--display);font-size:22px">${esc(p.name)}</h1>
+        <p class="muted" style="margin:0">${esc(p.desc||'')}</p>
+        <div class="row"><span class="kindtag">${esc(KINDS[p.kind]?.name||p.kind)}</span><span class="faint">${p.items.length} таавар</span></div>
+        <div class="row" style="margin-top:6px">
+          <button class="btn small" onclick="openItem()">+ Таавар нэмэх</button>
+          <button class="btn ghost small" onclick="openPack('${p.id}')">Багцын тохиргоо</button>
+          <button class="btn ghost small" onclick="regenCover('${p.id}')" ${p.items.length?'':'disabled'}>Ковер шинэчлэх</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="items">
+    ${p.items.map(it=>itemCard(p,it)).join('')}
+    <button class="item newone" onclick="openItem()">+ Таавар нэмэх</button>
+  </div>`;
+}
+function itemCard(p,it){
+  let th;
+  if(p.kind==='pair')th=`<div class="th">${(it.clues||[]).map(c=>`<img src="${esc(fileUrl(c))}" alt="" loading="lazy">`).join('')}</div>`;
+  else if(p.kind==='rebus')th=`<div class="th one"><img src="${esc(fileUrl(it.q))}" alt="" loading="lazy" style="object-fit:contain;background:#fff"></div>`;
+  else th=`<div class="th one"><div class="code">${esc(it.code)}</div></div>`;
+  const sub=p.kind==='pair'?it.en:p.kind==='rebus'?it.mn:it.artist;
+  return `<button class="item" onclick="openItem('${it.id}')">${th}<span class="meta"><strong>${esc(it.a)}</strong><small>${esc(sub||'—')}</small>${p.coverItem===it.id?'<span class="badge">Ковер</span>':''}</span></button>`;
+}
+function renderPub(){
+  const n=changeCount();
+  $('pub').innerHTML=n?`<div class="pub"><span><i class="dot"></i>Нийтлээгүй өөрчлөлт байна</span>
+    <button class="btn ghost small" onclick="discard()">Буцаах</button>
+    <button class="btn" id="pubBtn" onclick="publish()" ${A.busy?'disabled':''}>${A.busy?'Нийтэлж байна…':'Сайтад нийтлэх'}</button></div>`:'';
+}
+function changeCount(){return A.dirty&&JSON.stringify(A.data)!==A.original?1:0}
+function markDirty(){A.dirty=true;render()}
+function discard(){if(!discard.ok){discard.ok=true;toast('Дахин дарвал бүх өөрчлөлт буцна');setTimeout(()=>discard.ok=false,4000);return}
+  A.data=JSON.parse(A.original);A.newFiles.clear();A.dirty=false;discard.ok=false;if(!A.data.packs.find(x=>x.id===A.sel))A.sel=A.data.packs[0]?.id;render()}
+
+/* ================= login action ================= */
+async function doLogin(){
+  const btn=$('lbtn'),err=$('lerr');btn.disabled=true;btn.textContent='Шалгаж байна…';err.textContent='';
+  try{await login($('tok').value,$('repo').value,$('remember').checked);render()}
+  catch(e){err.textContent=e.status===401?'Token буруу эсвэл хугацаа нь дууссан байна.':e.status===404?'Repo олдсонгүй, эсвэл token-д энэ repo-гийн эрх өгөөгүй байна.':e.message;btn.disabled=false;btn.textContent='Нэвтрэх'}
+}
+
+/* ================= pack editor ================= */
+let PD=null;
+function openPack(id){
+  const p=id?A.data.packs.find(x=>x.id===id):null;
+  PD=p?{...p,colors:p.colors||PALETTE[0],isNew:false,confirmDel:false}:{id:'p'+Date.now().toString(36),name:'',level:'easy',kind:'pair',desc:'',prompt:KINDS.pair.prompt,placeholder:KINDS.pair.placeholder,colors:PALETTE[A.data.packs.length%PALETTE.length],items:[],isNew:true,confirmDel:false};
+  renderPackSheet();
+}
+function renderPackSheet(){
+  const d=PD;
+  $('sheet').innerHTML=`<div class="scrim" onclick="if(event.target===this)closeSheet()"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ph">
+    <div class="sheet-h"><h2 id="ph">${d.isNew?'Шинэ багц':'Багцын тохиргоо'}</h2><button class="x" onclick="closeSheet()" aria-label="Хаах">×</button></div>
+    <form class="stack" onsubmit="event.preventDefault();savePack()">
+      <label class="f"><span>Багцын нэр <span class="req">*</span></span><input class="i" id="pName" value="${esc(d.name)}" required maxlength="40" placeholder="Жишээ нь: Амьтад"></label>
+      <div class="grid2">
+        <label class="f">Түвшин<select class="i" id="pLevel">${LEVELS.map(l=>`<option value="${l.id}" ${l.id===d.level?'selected':''}>${l.name} (${l.age})</option>`).join('')}</select></label>
+        <label class="f">Тааврын төрөл<select class="i" id="pKind" ${d.isNew?'':'disabled'} onchange="kindChanged(this.value)">${Object.entries(KINDS).map(([k,v])=>`<option value="${k}" ${k===d.kind?'selected':''}>${v.name}</option>`).join('')}</select>
+          <span class="help">${d.isNew?esc(KINDS[d.kind].desc):'Таавар орсон багцын төрлийг өөрчлөх боломжгүй'}</span></label>
+      </div>
+      <label class="f">Тайлбар (нүүр хуудсан дээр)<input class="i" id="pDesc" value="${esc(d.desc)}" maxlength="70" placeholder="${esc(KINDS[d.kind].desc)}"></label>
+      <div class="grid2">
+        <label class="f">Тааврын дээрх заавар<input class="i" id="pPrompt" value="${esc(d.prompt)}" maxlength="60"></label>
+        <label class="f">Хариулт бичих талбарын текст<input class="i" id="pPh" value="${esc(d.placeholder)}" maxlength="40"></label>
+      </div>
+      <div class="f" style="font-size:13px;font-weight:600;color:var(--muted);display:flex;flex-direction:column;gap:6px">Ковер өнгө
+        <div class="swatches">${PALETTE.map((c,k)=>`<button type="button" class="sw" aria-label="Өнгө ${k+1}" aria-pressed="${JSON.stringify(c)===JSON.stringify(d.colors)}" style="background:linear-gradient(${rgb(c[0])},${rgb(c[1])})" onclick="PD.colors=PALETTE[${k}];syncPack();renderPackSheet()"></button>`).join('')}</div></div>
+      ${!d.isNew&&d.items.length?`<label class="f">Ковер дээр харуулах таавар<select class="i" id="pCoverItem">${d.items.map(it=>`<option value="${it.id}" ${it.id===(d.coverItem||d.items[0].id)?'selected':''}>${esc(it.a)}</option>`).join('')}</select><span class="help">Өнгө эсвэл таавар солибол ковер нийтлэх үед шинэчлэгдэнэ</span></label>`:''}
+      ${d.confirmDel?`<div class="confirm"><span style="flex:1">«${esc(d.name)}» багц ба доторх ${d.items.length} таавар устана.</span><button type="button" class="btn ghost small" onclick="PD.confirmDel=false;syncPack();renderPackSheet()">Болих</button><button type="button" class="btn danger small" onclick="deletePack()">Устгах</button></div>`:''}
+      <div class="sheet-f">
+        ${d.isNew?'<span></span>':`<button type="button" class="btn danger" onclick="PD.confirmDel=true;syncPack();renderPackSheet()">Багц устгах</button>`}
+        <div class="row"><button type="button" class="btn ghost" onclick="closeSheet()">Болих</button><button class="btn" type="submit">${d.isNew?'Багц үүсгэх':'Хадгалах'}</button></div>
+      </div>
+    </form></div></div>`;
+}
+function syncPack(){const g=id=>$(id)?.value;if(!$('pName'))return;PD.name=g('pName');PD.level=g('pLevel');if(PD.isNew)PD.kind=g('pKind');PD.desc=g('pDesc');PD.prompt=g('pPrompt');PD.placeholder=g('pPh');if($('pCoverItem'))PD.coverItem=g('pCoverItem')}
+function kindChanged(k){const old=KINDS[PD.kind];syncPack();PD.kind=k;
+  if(!PD.prompt||PD.prompt===old.prompt)PD.prompt=KINDS[k].prompt;if(!PD.placeholder||PD.placeholder===old.placeholder)PD.placeholder=KINDS[k].placeholder;renderPackSheet()}
+function savePack(){
+  syncPack();const d=PD;if(!d.name.trim())return;
+  const clean={id:d.id,name:d.name.trim(),level:d.level,kind:d.kind,desc:d.desc.trim()||KINDS[d.kind].desc,prompt:d.prompt.trim()||KINDS[d.kind].prompt,placeholder:d.placeholder.trim()||KINDS[d.kind].placeholder,colors:d.colors,cover:d.cover||null,items:d.items};
+  if(d.coverItem)clean.coverItem=d.coverItem;
+  if(d.isNew){clean.coverDirty=true;A.data.packs.push(clean)}
+  else{const i=A.data.packs.findIndex(x=>x.id===d.id);const old=A.data.packs[i];
+    if(JSON.stringify(old.colors)!==JSON.stringify(clean.colors)||old.coverItem!==clean.coverItem)clean.coverDirty=true;else if(old.coverDirty)clean.coverDirty=true;
+    A.data.packs[i]=clean}
+  A.sel=d.id;closeSheet();markDirty();toast(d.isNew?'Багц үүслээ. Одоо таавар нэмээрэй.':'Хадгаллаа');
+}
+function deletePack(){A.data.packs=A.data.packs.filter(x=>x.id!==PD.id);A.sel=A.data.packs[0]?.id||null;closeSheet();markDirty();toast('Багц устлаа')}
+function regenCover(id){const p=A.data.packs.find(x=>x.id===id);p.coverDirty=true;markDirty();toast('Ковер нийтлэх үед шинэчлэгдэнэ')}
+
+/* ================= item editor ================= */
+let ID=null;
+function openItem(itemId){
+  const p=A.data.packs.find(x=>x.id===A.sel);
+  const it=itemId?p.items.find(x=>x.id===itemId):null;
+  ID=it?JSON.parse(JSON.stringify(it)):{id:uid(),a:'',clues:[null,null]};
+  ID._new=!it;ID._confirm=false;ID._codeAuto=!it||!it.code||it.code===consonants(it.a);
+  renderItemSheet();
+}
+function dropBox(key,label,mode,req,cls=''){
+  const v=key.startsWith('clue')?ID.clues?.[+key.slice(4)]:ID[key];
+  return `<div class="drop ${cls}"><span>${label}${req?' <span style="color:var(--bad)">*</span>':''}</span>
+    <div class="box ${v?'has':''}" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="event.preventDefault();this.classList.remove('over');pickFile('${key}','${mode}',event.dataTransfer.files[0])">
+      ${v?`<img src="${esc(fileUrl(v))}" alt="">`:'Зураг сонгох<br>эсвэл чирж оруулах'}
+      <input type="file" accept="image/*" aria-label="${esc(label)}" onchange="pickFile('${key}','${mode}',this.files[0])">
+    </div>
+    ${v&&!req?`<button type="button" class="clear" onclick="setImg('${key}',null)">Хасах</button>`:''}
+  </div>`;
+}
+function renderItemSheet(){
+  const p=A.data.packs.find(x=>x.id===A.sel),d=ID,k=p.kind;
+  let fields='';
+  if(k==='pair')fields=`
+    <div class="drops">${dropBox('clue0','Сэжүүр 1','square',true)}${dropBox('clue1','Сэжүүр 2','square',true)}${dropBox('ans','Хариултын зураг','fit',false,'fit')}</div>
+    <span class="help">Сэжүүр зураг дөрвөлжин болж тайрагдана. Хариултын зураг заавал биш, хариулсны дараа харагдана.</span>
+    <div class="grid2">
+      <label class="f"><span>Хариулт (монгол) <span class="req">*</span></span><input class="i" id="iA" value="${esc(d.a)}" required placeholder="Цасан хүн"></label>
+      <label class="f">Англи хариулт<input class="i" id="iEn" value="${esc(d.en||'')}" placeholder="Snowman"><span class="help">Тоглогч англиар бичсэн ч зөв тооцно. Мөн «Англиар сонсох» товчинд уншигдана.</span></label>
+    </div>
+    <label class="row faint" style="gap:8px"><input type="checkbox" id="iWords" ${d.showWords?'checked':''}> Хариулт хэдэн үгтэйг тоглогчид харуулах</label>`;
+  else if(k==='rebus')fields=`
+    <div class="drops two">${dropBox('q','Таавар зураг','fit',true,'wide')}${dropBox('ans','Хариултын зураг','fit',false,'wide')}</div>
+    <div class="grid2">
+      <label class="f"><span>Хариулт (англи) <span class="req">*</span></span><input class="i" id="iA" value="${esc(d.a)}" required placeholder="Breakfast"></label>
+      <label class="f">Монгол орчуулга<input class="i" id="iMn" value="${esc(d.mn||'')}" placeholder="Өглөөний цай"><span class="help">Монголоор бичсэн хариултыг ч зөв тооцно</span></label>
+    </div>`;
+  else fields=`
+    <div class="grid2">
+      <label class="f"><span>Нэр (хариулт) <span class="req">*</span></span><input class="i" id="iA" value="${esc(d.a)}" required placeholder="Итгэл юм шүү" oninput="if(ID._codeAuto){$('iCode').value=consonants(this.value)}"></label>
+      <label class="f"><span>Дуучин / хамтлаг <span class="req">*</span></span><input class="i" id="iArtist" value="${esc(d.artist||'')}" required placeholder="Дуучин: Л.Болдбаатар"><span class="help">Сэжүүр дарахад харагдана</span></label>
+    </div>
+    <label class="f">Тоглогчид харагдах эгшиггүй код<input class="i" id="iCode" value="${esc(d.code||consonants(d.a))}" oninput="ID._codeAuto=false" style="font-family:var(--display);letter-spacing:.06em"><span class="help">Нэрээс автоматаар үүснэ. Хүсвэл өөрчилж болно.</span></label>`;
+  $('sheet').innerHTML=`<div class="scrim" onclick="if(event.target===this)closeSheet()"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ih">
+    <div class="sheet-h"><h2 id="ih">${d._new?'Таавар нэмэх':'Таавар засах'}</h2><button class="x" onclick="closeSheet()" aria-label="Хаах">×</button></div>
+    <form class="stack" onsubmit="event.preventDefault();saveItem()">
+      ${fields}
+      <div class="grid2">
+        <label class="f">Бусад зөв хариулт<input class="i" id="iAlt" value="${esc((d.alt||[]).join(', '))}" placeholder="таслалаар тусгаарла"><span class="help">Ижил утгатай өөр хувилбарууд. Латинаар бичсэнийг автоматаар тааруулна.</span></label>
+        ${k==='song'?'':`<label class="f">Сэжүүр<input class="i" id="iHint" value="${esc(d.hint||'')}" placeholder="Хоосон бол эхний үсэг, урт харагдана"></label>`}
+      </div>
+      <div class="err" id="ierr"></div>
+      ${d._confirm?`<div class="confirm"><span style="flex:1">Энэ тааврыг устгах уу?</span><button type="button" class="btn ghost small" onclick="ID._confirm=false;syncItem();renderItemSheet()">Болих</button><button type="button" class="btn danger small" onclick="deleteItem()">Устгах</button></div>`:''}
+      <div class="sheet-f">
+        ${d._new?'<span></span>':`<button type="button" class="btn danger" onclick="ID._confirm=true;syncItem();renderItemSheet()">Устгах</button>`}
+        <div class="row"><button type="button" class="btn ghost" onclick="closeSheet()">Болих</button><button class="btn" type="submit">${d._new?'Нэмэх':'Хадгалах'}</button></div>
+      </div>
+    </form></div></div>`;
+}
+function syncItem(){
+  const g=id=>$(id)?$(id).value.trim():undefined,d=ID;
+  if(g('iA')!==undefined)d.a=g('iA');
+  if($('iEn'))d.en=g('iEn');if($('iMn'))d.mn=g('iMn');if($('iArtist'))d.artist=g('iArtist');if($('iCode'))d.code=g('iCode');
+  if($('iHint'))d.hint=g('iHint');if($('iWords'))d.showWords=$('iWords').checked;
+  if($('iAlt'))d.alt=g('iAlt').split(/[,;\n]/).map(s=>s.trim()).filter(Boolean);
+}
+async function pickFile(key,mode,file){
+  if(!file)return;if(!/^image\//.test(file.type)){toast('Зөвхөн зураг оруулна уу',true);return}
+  syncItem();
+  try{const path=await processImage(file,mode);setImg(key,path)}catch(e){toast(e.message,true)}
+}
+function setImg(key,path){syncItem();if(key.startsWith('clue')){ID.clues=ID.clues||[null,null];ID.clues[+key.slice(4)]=path}else ID[key]=path;renderItemSheet()}
+function saveItem(){
+  syncItem();const p=A.data.packs.find(x=>x.id===A.sel),d=ID,err=$('ierr');
+  if(!d.a){err.textContent='Хариултаа бичнэ үү.';return}
+  if(p.kind==='pair'&&!(d.clues?.[0]&&d.clues?.[1])){err.textContent='Хоёр сэжүүр зургаа оруулна уу.';return}
+  if(p.kind==='rebus'&&!d.q){err.textContent='Таавар зургаа оруулна уу.';return}
+  if(p.kind==='song'&&!d.artist){err.textContent='Дуучин эсвэл хамтлагийн нэрийг бичнэ үү.';return}
+  const it={id:d.id,a:d.a};
+  if(p.kind==='pair'){it.en=d.en||'';it.clues=d.clues;it.ans=d.ans||null;if(d.showWords)it.showWords=true}
+  else if(p.kind==='rebus'){it.mn=d.mn||'';it.q=d.q;it.ans=d.ans||null}
+  else{it.code=d.code||consonants(d.a);it.artist=d.artist}
+  if(d.hint)it.hint=d.hint;if(d.alt?.length)it.alt=d.alt;
+  const i=p.items.findIndex(x=>x.id===it.id);
+  if(i<0)p.items.push(it);else p.items[i]=it;
+  if(!p.cover||(p.coverItem||p.items[0]?.id)===it.id)p.coverDirty=true;
+  closeSheet();markDirty();toast(d._new?'Таавар нэмэгдлээ. Дуусгаад «Сайтад нийтлэх» дарна уу.':'Хадгаллаа');
+}
+function deleteItem(){const p=A.data.packs.find(x=>x.id===A.sel);p.items=p.items.filter(x=>x.id!==ID.id);if(p.coverItem===ID.id){delete p.coverItem;p.coverDirty=true}closeSheet();markDirty();toast('Таавар устлаа')}
+function closeSheet(){$('sheet').innerHTML='';ID=null;PD=null}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('sheet').innerHTML)closeSheet()});
+
+/* ================= publish: one commit with JSON + new images, unused images removed ================= */
+function referenced(data){const s=new Set();for(const p of data.packs){if(p.cover)s.add(p.cover);for(const it of p.items){[it.q,it.ans,...(it.clues||[])].forEach(x=>x&&s.add(x))}}return s}
+async function publish(){
+  if(A.busy)return;A.busy=true;renderPub();
+  try{
+    for(const p of A.data.packs){if((p.coverDirty||!p.cover)&&p.items.length){p.cover=await makeCover(p)}delete p.coverDirty}
+    const used=referenced(A.data),before=referenced(JSON.parse(A.original));
+    const ref=await gh(`/repos/${A.repo}/git/ref/heads/${BRANCH}`);
+    const head=await gh(`/repos/${A.repo}/git/commits/${ref.object.sha}`);
+    const tree=[];
+    for(const [path,f] of A.newFiles){if(!used.has(path))continue;
+      const b=await gh(`/repos/${A.repo}/git/blobs`,{method:'POST',body:JSON.stringify({content:await blobToB64(f.blob),encoding:'base64'})});
+      tree.push({path,mode:'100644',type:'blob',sha:b.sha})}
+    for(const path of before)if(!used.has(path)&&path.startsWith('images/'))tree.push({path,mode:'100644',type:'blob',sha:null});
+    const json=JSON.stringify({version:1,updated:new Date().toISOString(),packs:A.data.packs},null,1);
+    tree.push({path:DATA_PATH,mode:'100644',type:'blob',content:json});
+    const t=await gh(`/repos/${A.repo}/git/trees`,{method:'POST',body:JSON.stringify({base_tree:head.tree.sha,tree})});
+    const n=A.newFiles.size;
+    const cm=await gh(`/repos/${A.repo}/git/commits`,{method:'POST',body:JSON.stringify({message:`Admin: таавар шинэчлэв (${A.data.packs.reduce((s,p)=>s+p.items.length,0)} таавар)`,tree:t.sha,parents:[ref.object.sha]})});
+    await gh(`/repos/${A.repo}/git/refs/heads/${BRANCH}`,{method:'PATCH',body:JSON.stringify({sha:cm.sha})});
+    A.original=JSON.stringify(A.data);A.dirty=false;
+    toast('Нийтэллээ. Сайт 1–2 минутын дараа шинэчлэгдэнэ.');
+  }catch(e){
+    toast('Нийтэлж чадсангүй: '+(e.status===401?'token-ий хугацаа дууссан байна, дахин нэвтэрнэ үү':e.status===409?'repo өөрчлөгдсөн байна, хуудсаа дахин ачаална уу':e.message),true);
+  }finally{A.busy=false;render()}
+}
+window.addEventListener('beforeunload',e=>{if(changeCount()){e.preventDefault();e.returnValue=''}});
+
+/* ================= boot ================= */
+(async()=>{
+  if(A.token){$('app').innerHTML='<p class="muted" style="text-align:center;padding:60px 0">Ачаалж байна…</p>';
+    try{await login(A.token,A.repo,!!localStorage.getItem('mra:token'))}catch(e){A.data=null;if(e.status===401)store.del('token')}}
+  render();
+})();
+</script>
+</body>
+</html>
